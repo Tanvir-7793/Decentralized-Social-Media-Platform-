@@ -259,7 +259,7 @@ export default function Home() {
             {navItem(
               <UserIcon size={20} />,
               "Profile",
-              !!myAddress && view.t === "profile" && stack.length === 1 && myAddress,
+              Boolean(!!myAddress && view.t === "profile" && stack.length === 1 && myAddress),
               goToProfile,
               !myAddress
             )}
