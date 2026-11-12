@@ -197,7 +197,7 @@ export default function Home() {
 
   // ---------- Nav item ----------
   const navItem = (
-    icon: JSX.Element,
+    icon: any,
     label: string,
     active: boolean,
     onClick: () => void,
