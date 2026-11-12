@@ -72,7 +72,7 @@ export default function Home() {
     view.t === "home" ? "Home" : view.t === "profile" ? "Profile" : "Post";
 
   // ---------- Views ----------
-  let content: JSX.Element | null = null;
+  let content = null;
   if (view.t === "home") {
     const list =
       tab === "all"
