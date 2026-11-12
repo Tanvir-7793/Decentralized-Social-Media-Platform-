@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { useAccount } from "wagmi";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import {
@@ -30,7 +30,6 @@ export default function Home() {
   const S = useSocial();
   const { address } = useAccount();
   const myAddress = S.me;
-  const scroller = useRef<HTMLDivElement>(null);
   const [stack, setStack] = useState<View[]>([{ t: "home" }]);
   const [tab, setTab] = useState<"all" | "following">("all");
   const view = stack[stack.length - 1];
@@ -38,9 +37,9 @@ export default function Home() {
   const go = useCallback(
     (v: View) => {
       setStack((s) => [...s, v]);
-      scroller.current?.scrollTo({ top: 0 });
+      window.scrollTo(0, 0);
     },
-    [setStack, scroller],
+    [setStack],
   );
   const back = useCallback(() => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s)), [setStack]);
   const toProfile = useCallback((a: string) => go({ t: "profile", a }), [go]);
@@ -50,9 +49,9 @@ export default function Home() {
   const goToProfile = useCallback(() => {
     if (myAddress) {
       setStack((s) => [...s, { t: "profile", a: myAddress }]);
-      scroller.current?.scrollTo({ top: 0 });
+      window.scrollTo(0, 0);
     }
-  }, [setStack, scroller, myAddress]);
+  }, [setStack, myAddress]);
 
   const row = (p: any, large = false) => (
     <PostRow key={p.id} post={p} S={S} onProfile={toProfile} onThread={toThread} large={large} />
@@ -219,7 +218,6 @@ export default function Home() {
 
   return (
     <div
-      ref={scroller}
       className={`${sans.className} fixed inset-0 z-40 overflow-y-auto bg-[#000000] ${textMain} selection:bg-[#1d9bf0]`}
     >
       {/* Top bar */}
@@ -262,7 +260,6 @@ export default function Home() {
               <UserIcon size={20} />,
               "Profile",
               !!myAddress && view.t === "profile" && stack.length === 1 && myAddress,
-              // eslint-disable-next-line react-hooks/refs
               goToProfile,
               !myAddress
             )}
