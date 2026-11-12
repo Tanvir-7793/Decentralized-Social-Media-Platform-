@@ -1,74 +1,347 @@
 "use client";
 
-import Link from "next/link";
-import { Address } from "@scaffold-ui/components";
-import type { NextPage } from "next";
+import { useRef, useState } from "react";
 import { useAccount } from "wagmi";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
+import {
+  BackIcon,
+  Composer,
+  FollowButton,
+  HomeIcon,
+  IpfsText,
+  Orb,
+  PostRow,
+  ProfileSetup,
+  UserIcon,
+  display,
+  fName,
+  sans,
+  surface,
+  card,
+  border,
+  textMain,
+  textDim,
+  textMuted,
+  accent,
+  accentBg,
+} from "~~/components/social/ui";
+import { short, useSocial } from "~~/hooks/useSocial";
 
-const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
-  const { targetNetwork } = useTargetNetwork();
+type View = { t: "home" } | { t: "profile"; a: string } | { t: "thread"; id: string };
+
+export default function Home() {
+  const S = useSocial();
+  const { address } = useAccount();
+  const scroller = useRef<HTMLDivElement>(null);
+  const [stack, setStack] = useState<View[]>([{ t: "home" }]);
+  const [tab, setTab] = useState<"all" | "following">("all");
+  const view = stack[stack.length - 1];
+
+  const go = (v: View) => {
+    setStack((s) => [...s, v]);
+    scroller.current?.scrollTo({ top: 0 });
+  };
+  const back = () => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s));
+  const toProfile = (a: string) => go({ t: "profile", a });
+  const toThread = (id: string) => go({ t: "thread", id });
+  const myProfile = S.me ? S.profiles.get(S.me) : undefined;
+
+  const row = (p: any, large = false) => (
+    <PostRow key={p.id} post={p} S={S} onProfile={toProfile} onThread={toThread} large={large} />
+  );
+
+  const feed = (list: any[], empty: string) =>
+    S.error && list.length === 0 ? (
+      <p className="px-4 py-10 text-center text-[#71767b]">{S.error}</p>
+    ) : S.loading ? (
+      <p className="px-4 py-10 text-center text-[#71767b]">Loading posts…</p>
+    ) : list.length === 0 ? (
+      <p className="px-4 py-10 text-center text-[#71767b]">{empty}</p>
+    ) : (
+      list.map((p) => row(p))
+    );
+
+  const title =
+    view.t === "home" ? "Home" : view.t === "profile" ? "Profile" : "Post";
+
+  // ---------- Views ----------
+  let content: JSX.Element | null = null;
+  if (view.t === "home") {
+    const list =
+      tab === "all"
+        ? S.topPosts
+        : S.topPosts.filter((p) => p.author === S.me || S.following(p.author));
+    content = (
+      <>
+        {!address ? (
+          <p className="border-b border-[#202020]/40 px-4 py-6 text-[#71767b] text-sm">
+            Everything here is public. Connect a wallet to post, like and follow.
+          </p>
+        ) : !myProfile ? (
+          <ProfileSetup S={S} />
+        ) : (
+          <>
+            <Composer
+              S={S}
+              placeholder="What is happening?"
+              label="Post"
+              onSubmit={(t) => S.publish(t)}
+            />
+            <div className="flex gap-6 border-b border-[#202020]/40 px-4 py-2">
+              {(["all", "following"] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTab(t)}
+                  className={`-mb-px border-b-2 py-2 text-sm font-bold transition-all ${
+                    tab === t
+                      ? `${accent} border-[#1d9bf0]`
+                      : `${textDim} border-transparent hover:text-[#f7f9f9]`
+                  }`}
+                >
+                  {t === "all" ? "For you" : "Following"}
+                </button>
+              ))}
+            </div>
+            {feed(
+              list,
+              tab === "all"
+                ? "Nothing here yet. Publish the first post."
+                : "Your Following feed is empty. Follow someone from For you to see their posts here.",
+            )}
+          </>
+        )}
+      </>
+    );
+  } else if (view.t === "profile") {
+    const a = view.a;
+    const prof = S.profiles.get(a);
+    const posts = S.allPosts.filter((p) => p.author === a);
+    content = (
+      <>
+        <div className="border-b border-[#202020]/40 px-4 py-4">
+          <div className="flex items-start justify-between mb-3">
+            <Orb address={a} size={72} />
+            {S.me && S.me !== a && <FollowButton S={S} address={a} />}
+          </div>
+          <h2 className={`${fName} mt-2 text-2xl tracking-tight`}>
+            {prof ? `@${prof.handle}` : short(a)}
+          </h2>
+          <p className={`${textDim} text-sm`}>{short(a)}</p>
+          {prof?.cid && <IpfsText cid={prof.cid} className="mt-2" />}
+          <dl className="mt-4 flex gap-6 text-sm">
+            {[
+              ["Posts", posts.length],
+              ["Following", S.followingCount(a)],
+              ["Followers", S.followerCount(a)],
+            ].map(([k, v]) => (
+              <div key={k}>
+                <dt className={textDim}>{k}</dt>
+                <dd className={`${fName} text-lg`}>{v}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+        {feed(posts, "No posts yet.")}
+      </>
+    );
+  } else {
+    const post = S.posts.get(view.id);
+    const parent =
+      post && post.replyTo !== "0" ? S.posts.get(post.replyTo) : undefined;
+    const replies = (S.replies.get(view.id) ?? [])
+      .map((id) => S.posts.get(id)!)
+      .filter(Boolean);
+    content = post ? (
+      <>
+        {parent && row(parent)}
+        {row(post, true)}
+        {myProfile ? (
+          <Composer
+            S={S}
+            placeholder="Write a reply"
+            label="Reply"
+            onSubmit={(t) => S.publish(t, post.id)}
+          />
+        ) : (
+          <p className="border-b border-[#202020]/40 px-4 py-4 text-[#71767b] text-sm">
+            Connect a wallet and create a profile to reply.
+          </p>
+        )}
+        {replies.length === 0 ? (
+          <p className="px-4 py-8 text-center text-[#71767b] text-sm">
+            No replies yet.
+          </p>
+        ) : (
+          [...replies].reverse().map((p) => row(p))
+        )}
+      </>
+    ) : (
+      <p className="px-4 py-10 text-center text-[#71767b] text-sm">
+        {S.loading ? "Loading…" : "This post doesn't exist."}
+      </p>
+    );
+  }
+
+  // ---------- Who to follow ----------
+  const suggestions = [...S.profiles.keys()]
+    .filter((a) => a !== S.me && !S.following(a))
+    .sort((a, b) => S.followerCount(b) - S.followerCount(a))
+    .slice(0, 4);
+
+  // ---------- Nav item ----------
+  const navItem = (
+    icon: JSX.Element,
+    label: string,
+    active: boolean,
+    onClick: () => void,
+    disabled = false
+  ) => (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+        active
+          ? `bg-[#1d9bf0]/10 ${accent} text-[#1d9bf0]`
+          : `${textDim} hover:bg-[#161616]/50 hover:text-[#f7f9f9]`
+      } ${disabled ? "opacity-40 cursor-not-allowed" : ""}`}
+    >
+      {icon} {label}
+    </button>
+  );
 
   return (
-    <>
-      <div className="flex items-center flex-col grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
-          </h1>
-          <div className="flex justify-center items-center space-x-2 flex-col">
-            <p className="my-2 font-medium">Connected Address:</p>
-            <Address address={connectedAddress} chain={targetNetwork} />
-          </div>
-
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/app/page.tsx
-            </code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              YourContract.sol
-            </code>{" "}
-            in{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/hardhat/contracts
-            </code>
-          </p>
+    <div
+      ref={scroller}
+      className={`${sans.className} fixed inset-0 z-40 overflow-y-auto bg-[#000000] ${textMain} selection:bg-[#1d9bf0]`}
+    >
+      {/* Top bar */}
+      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-[#202020]/40 bg-[#000000]/80 px-4 py-2 backdrop-blur-md">
+        <button onClick={() => setStack([{ t: "home" }])} className="-ml-1 flex items-center gap-2">
+          <span className={`${display.className} text-xl font-bold tracking-tight`}>Orbit</span>
+        </button>
+        <div className="flex items-center gap-3">
+          {S.me ? (
+            <button onClick={() => S.me && go({ t: "profile", a: S.me })} className="p-2 rounded-full hover:bg-[#161616] transition-colors">
+              <Orb address={S.me} size={28} />
+            </button>
+          ) : (
+            <RainbowKitCustomConnectButton />
+          )}
         </div>
+      </header>
 
-        <div className="grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col md:flex-row">
-            <div className="flex flex-col bg-base-100 border border-base-300 px-10 py-10 text-center items-center max-w-xs">
-              <BugAntIcon className="h-8 w-8" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contracts
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 border border-base-300 px-10 py-10 text-center items-center max-w-xs">
-              <MagnifyingGlassIcon className="h-8 w-8" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
+      <div className="mx-auto flex max-w-[1200px]">
+        {/* Left rail */}
+        <nav
+          className="sticky top-[60px] hidden h-[calc(100vh-60px)] w-64 shrink-0 flex-col px-3 py-4 md:flex"
+        >
+          <div className="flex flex-col gap-1">
+            <button
+              onClick={() => setStack([{ t: "home" }])}
+              className={`mb-4 flex items-center gap-3 text-[20px] font-bold tracking-tight`}
+            >
+              <HomeIcon size={22} className={textMuted} /> <span>Orbit</span>
+            </button>
+            {navItem(
+              <HomeIcon size={20} />,
+              "Home",
+              view.t === "home" && stack.length === 1,
+              () => setStack([{ t: "home" }])
+            )}
+            {navItem(
+              <UserIcon size={20} />,
+              "Profile",
+              !!S.me && view.t === "profile" && stack.length === 1 && S.me,
+              () => S.me && go({ t: "profile", a: S.me }),
+              !S.me
+            )}
           </div>
-        </div>
+          <div className="mt-auto pt-4 border-t border-[#202020]/40">
+            <RainbowKitCustomConnectButton />
+          </div>
+        </nav>
+
+        {/* Center column */}
+        <main className="min-h-screen w-full max-w-[600px] border-x border-[#202020]/40 px-4 pb-24 md:px-0 md:border-x-0 md:pb-0">
+          <div className="sticky top-[60px] z-10 flex items-center justify-between border-b border-[#202020]/40 bg-[#000000]/80 px-4 py-2 backdrop-blur-md">
+            {stack.length > 1 && (
+              <button onClick={back} aria-label="Go back" className="-ml-1 p-1.5 rounded-full hover:bg-[#161616] transition-colors">
+                <BackIcon size={18} />
+              </button>
+            )}
+            <h1 className={`${fName} text-lg`}>{title}</h1>
+            <div className="w-6" />
+          </div>
+          <div className="pt-1">{content}</div>
+        </main>
+
+        {/* Right column */}
+        <aside className="sticky top-[60px] hidden h-[calc(100vh-60px)] w-80 shrink-0 flex-col gap-6 px-6 py-4 lg:flex">
+          <section>
+            <h2 className={`${fName} mb-3 text-sm font-bold`}>Who to follow</h2>
+            {suggestions.length === 0 ? (
+              <p className={`${textDim} text-sm`}>
+                Nobody else has joined yet. Invite a friend to make a profile.
+              </p>
+            ) : (
+              <ul className="flex flex-col gap-3">
+                {suggestions.map((a) => (
+                  <li key={a} className="flex items-center gap-3">
+                    <button
+                      onClick={() => toProfile(a)}
+                      className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                    >
+                      <Orb address={a} size={32} />
+                      <span className={`${fName} truncate text-[14px]`}>
+                        @{S.profiles.get(a)?.handle}
+                      </span>
+                    </button>
+                    <FollowButton S={S} address={a} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+          <p className={`${textDim} text-xs leading-relaxed`}>
+            Orbit runs on Base Sepolia, a test network. Profiles, posts, likes
+            and follows live on-chain.
+            {S.contractAddress && (
+              <>
+                {" "}
+                <a
+                  className={`${accent} underline`}
+                  target="_blank"
+                  rel="noreferrer"
+                  href={`https://sepolia.basescan.org/address/${S.contractAddress}`}
+                >
+                  View the contract
+                </a>
+              </>
+            )}
+          </p>
+        </aside>
       </div>
-    </>
-  );
-};
 
-export default Home;
+      {/* Mobile bottom nav */}
+      <div className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-[#202020]/40 bg-[#000000]/90 px-4 py-2 backdrop-blur md:hidden">
+        <button
+          onClick={() => setStack([{ t: "home" }])}
+          className={`p-2 rounded-full transition-colors ${
+            view.t === "home" && stack.length === 1 ? accentBg : ""
+          }`}
+          aria-label="Home"
+        >
+          <HomeIcon size={22} color={view.t === "home" && stack.length === 1 ? "#0a0a0a" : "#71767b"} />
+        </button>
+        <button
+          onClick={() => S.me && go({ t: "profile", a: S.me })}
+          className="p-2 rounded-full transition-colors hover:bg-[#161616]"
+          aria-label="Profile"
+          disabled={!S.me}
+        >
+          <UserIcon size={22} />
+        </button>
+      </div>
+    </div>
+  );
+}

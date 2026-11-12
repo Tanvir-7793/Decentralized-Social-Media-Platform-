@@ -1,23 +1,77 @@
-# dependencies
-node_modules
+# =============================================================================
+# Scaffold-ETH 2 · Modern .gitignore
+# =============================================================================
 
-# yarn
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+# -----------------------------------------------------
+# Dependencies
+# -----------------------------------------------------
+node_modules/
+.pnp/
+.pnp.js
 
-# eslint
-.eslintcache
+# -----------------------------------------------------
+# Build outputs
+# -----------------------------------------------------
+.next/
+out/
+dist/
+build/
+*.tgz
 
-# misc
+# -----------------------------------------------------
+# Environment (never commit real .env)
+# -----------------------------------------------------
+.env
+.env.local
+.env.*.local
+! .env.example
+
+# -----------------------------------------------------
+# Yarn (Berry / v4)
+# -----------------------------------------------------
+.yarn/cache
+.yarn/install-state.gz
+.yarn/releases/*
+
+# -----------------------------------------------------
+# Foundry
+# -----------------------------------------------------
+packages/foundry/out/
+packages/foundry/cache/
+packages/foundry/broadcast/
+packages/foundry/deployments/
+packages/foundry/lib/
+packages/foundry/*.json
+
+# -----------------------------------------------------
+# Next.js / Scaffold-ETH
+# -----------------------------------------------------
+packages/nextjs/contracts/*.ts
+!packages/nextjs/contracts/deployedContracts.ts
+
+# -----------------------------------------------------
+# IDE & Editors
+# -----------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 .DS_Store
+Thumbs.db
 
-# IDE
-.vscode
-.idea
+# -----------------------------------------------------
+# Logs & misc
+# -----------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+coverage/
+.nyc_output/
 
-# cli
-dist
+# -----------------------------------------------------
+# Misc
+# -----------------------------------------------------
+.envrc
+.direnv/
