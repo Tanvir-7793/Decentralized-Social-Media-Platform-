@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useAccount } from "wagmi";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import {
@@ -35,14 +35,21 @@ export default function Home() {
   const [tab, setTab] = useState<"all" | "following">("all");
   const view = stack[stack.length - 1];
 
-  const go = (v: View) => {
-    setStack((s) => [...s, v]);
-    scroller.current?.scrollTo({ top: 0 });
-  };
-  const back = () => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s));
-  const toProfile = (a: string) => go({ t: "profile", a });
-  const toThread = (id: string) => go({ t: "thread", id });
+  const go = useCallback(
+    (v: View) => {
+      setStack((s) => [...s, v]);
+      scroller.current?.scrollTo({ top: 0 });
+    },
+    [setStack, scroller],
+  );
+  const back = useCallback(() => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s)), [setStack]);
+  const toProfile = useCallback((a: string) => go({ t: "profile", a }), [go]);
+  const toThread = useCallback((id: string) => go({ t: "thread", id }), [go]);
   const myProfile = S.me ? S.profiles.get(S.me) : undefined;
+
+  const goToProfile = useCallback(() => {
+    if (myAddress) go({ t: "profile", a: myAddress });
+  }, [myAddress, go]);
 
   const row = (p: any, large = false) => (
     <PostRow key={p.id} post={p} S={S} onProfile={toProfile} onThread={toThread} large={large} />
@@ -252,7 +259,7 @@ export default function Home() {
               <UserIcon size={20} />,
               "Profile",
               !!myAddress && view.t === "profile" && stack.length === 1 && myAddress,
-              () => myAddress && go({ t: "profile", a: myAddress }),
+              goToProfile,
               !myAddress
             )}
           </div>
