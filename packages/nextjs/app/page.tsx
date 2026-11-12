@@ -16,10 +16,6 @@ import {
   display,
   fName,
   sans,
-  surface,
-  card,
-  border,
-  textMain,
   textDim,
   textMuted,
   accent,
@@ -32,6 +28,7 @@ type View = { t: "home" } | { t: "profile"; a: string } | { t: "thread"; id: str
 export default function Home() {
   const S = useSocial();
   const { address } = useAccount();
+  const myAddress = S.me;
   const scroller = useRef<HTMLDivElement>(null);
   const [stack, setStack] = useState<View[]>([{ t: "home" }]);
   const [tab, setTab] = useState<"all" | "following">("all");
@@ -253,9 +250,9 @@ export default function Home() {
             {navItem(
               <UserIcon size={20} />,
               "Profile",
-              !!S.me && view.t === "profile" && stack.length === 1 && S.me,
-              () => S.me && go({ t: "profile", a: S.me }),
-              !S.me
+              !!myAddress && view.t === "profile" && stack.length === 1 && myAddress,
+              () => myAddress && go({ t: "profile", a: myAddress }),
+              !myAddress
             )}
           </div>
           <div className="mt-auto pt-4 border-t border-[#202020]/40">
