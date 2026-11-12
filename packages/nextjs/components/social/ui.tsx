@@ -42,29 +42,29 @@ export function Orb({ address, size = 40 }: { address: string; size?: number }) 
   );
 }
 
-const Icon = ({ d, size = 20, color = "currentColor", weight = 2 }: { d: string; size?: number; color?: string; weight?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round" strokeLinejoin="round">
+const Icon = ({ d, size = 20, color = "currentColor", weight = 2, className }: { d: string; size?: number; color?: string; weight?: number; className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round" strokeLinejoin="round" className={className}>
     <path d={d} />
   </svg>
 );
 
-export const HeartIcon = ({ filled }: { filled?: boolean }) => (
-  <svg width={22} height={22} viewBox="0 0 24 24" fill={filled ? "#f4212e" : "none"} stroke={filled ? "none" : "#71767b"} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+export const HeartIcon = ({ filled, size = 22, className }: { filled?: boolean; size?: number; className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "#f4212e" : "none"} stroke={filled ? "none" : "#71767b"} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
     <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3.05 1.32-3.458 3.045C12.727 4.309 12 4.793 12 5.198c-.207-.405-.927-.889-1.542-2.153C9.05 4.32 7.76 3 6 3a5.5 5.5 0 0 0-5.5 5.5c0 2.29 1.51 4.04 3 5.5l4 4 4-4z" />
   </svg>
 );
-export const ChatIcon = () => <Icon d="M22 12c0-5-3.542-9-8-9s-8 4-8 9 3.542 9 8 9 8-4 8-9" size={20} />;
-export const RepostIcon = () => (
-  <Icon d="M7 7h10v3l4-4-4-4v3H3v4h4v3l4 4 4-4v-3h3v-4H7z" size={20} />
+export const ChatIcon = ({ size = 20, className }: { size?: number; className?: string }) => <Icon d="M22 12c0-5-3.542-9-8-9s-8 4-8 9 3.542 9 8 9 8-4 8-9" size={size} className={className} />;
+export const RepostIcon = ({ size = 20, className }: { size?: number; className?: string }) => (
+  <Icon d="M7 7h10v3l4-4-4-4v3H3v4h4v3l4 4 4-4v-3h3v-4H7z" size={size} className={className} />
 );
-export const BookmarkIcon = () => <Icon d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" size={20} />;
-export const MoreIcon = () => (
-  <Icon d="M12 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0 7a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0 7a1 1 0 1 1 0 2 1 1 0 0 1 0-2" size={18} color="#71767b" />
+export const BookmarkIcon = ({ size = 20, className }: { size?: number; className?: string }) => <Icon d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" size={size} className={className} />;
+export const MoreIcon = ({ size = 18, className }: { size?: number; className?: string }) => (
+  <Icon d="M12 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0 7a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0 7a1 1 0 1 1 0 2 1 1 0 0 1 0-2" size={size} color="#71767b" className={className} />
 );
-export const BackIcon = () => <Icon d="M15 18l-6-6 6-6" size={20} />;
-export const HomeIcon = () => <Icon d="M3 12l9-8 9 8M12 5v14M12 5l-7 7M12 5l7 7" size={20} />;
-export const UserIcon = () => <Icon d="M19 21a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2z" size={20} />;
-export const TickIcon = () => <Icon d="M5 13l4 4L19 7" size={14} color="#1d9bf0" weight={2.5} />;
+export const BackIcon = ({ size = 20, className }: { size?: number; className?: string }) => <Icon d="M15 18l-6-6 6-6" size={size} className={className} />;
+export const HomeIcon = ({ size = 20, className }: { size?: number; className?: string }) => <Icon d="M3 12l9-8 9 8M12 5v14M12 5l-7 7M12 5l7 7" size={size} className={className} />;
+export const UserIcon = ({ size = 20, className }: { size?: number; className?: string }) => <Icon d="M19 21a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2z" size={size} className={className} />;
+export const TickIcon = ({ size = 14, className }: { size?: number; className?: string }) => <Icon d="M5 13l4 4L19 7" size={size} color="#1d9bf0" weight={2.5} className={className} />;
 
 // Text stored on IPFS
 export function IpfsText({ cid, className = "" }: { cid: string; className?: string }) {
