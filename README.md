@@ -188,9 +188,51 @@ documentation/
 
 ## 🌐 Live Demo
 
-Deployed on **Vercel**: https://decentralized-social-media-platform-rho.vercel.app/
+**Deployed on Vercel:** [https://decentralized-social-media-platform-rho.vercel.app/](https://decentralized-social-media-platform-rho.vercel.app/)
 
-Connect your MetaMask wallet on **Base Sepolia** and start using OrbitX!
+### 📱 How to Use the Live App
+
+1. **Open the app**  
+   Visit: [https://decentralized-social-media-platform-rho.vercel.app/](https://decentralized-social-media-platform-rho.vercel.app/)
+
+2. **Connect MetaMask**  
+   - Click the **Connect Wallet** button in the top-right corner (or bottom nav on mobile)
+   - Make sure you're on **Base Sepolia** testnet
+   - Approve the connection request in MetaMask
+
+3. **Create Your Profile**  
+   - Choose a unique handle (3–20 characters: letters, numbers, underscores)
+   - Add an optional short bio (stored on IPFS)
+   - Click **Create profile**
+
+4. **Publish a Post**  
+   - Type your message in the composer at the top of the feed
+   - Click **Post** — your text is pinned to IPFS and the post is recorded on-chain
+   - Your post appears in the "For you" feed instantly
+
+5. **Engage with Others**  
+   - ❤️ **Like** a post — tap the heart icon
+   - 👤 **Follow** a user — tap the Follow button on their profile
+   - 💬 **Reply** — click any post to open its thread, then write a reply
+   - 🔄 **Refresh** — the feed polls for new posts every 6 seconds
+
+6. **Explore Profiles**  
+   - Click any username or avatar to view their profile
+   - See their handle, bio, post count, following, and followers
+   - Browse all their posts
+
+7. **Switch Feeds**  
+   - **For you** — See posts from everyone
+   - **Following** — See posts only from people you follow
+
+### 💡 Tips
+
+- Your handle and wallet address are permanently linked on-chain
+- Posts and bios are stored on IPFS (decentralized storage)
+- All actions (post, like, follow) cost a small amount of Sepolia ETH for gas
+- Get free Sepolia ETH from a Base Sepolia faucet if needed
+- View your contract on BaseScan via the "View the contract" link in the right sidebar
+
 
 ## 🧠 Tech Stack
 
