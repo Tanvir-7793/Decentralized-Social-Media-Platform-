@@ -48,8 +48,11 @@ export default function Home() {
   const myProfile = S.me ? S.profiles.get(S.me) : undefined;
 
   const goToProfile = useCallback(() => {
-    if (myAddress) go({ t: "profile", a: myAddress });
-  }, [myAddress, go]);
+    if (myAddress) {
+      setStack((s) => [...s, { t: "profile", a: myAddress }]);
+      scroller.current?.scrollTo({ top: 0 });
+    }
+  }, [setStack, scroller, myAddress]);
 
   const row = (p: any, large = false) => (
     <PostRow key={p.id} post={p} S={S} onProfile={toProfile} onThread={toThread} large={large} />
