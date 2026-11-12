@@ -262,6 +262,7 @@ export default function Home() {
               <UserIcon size={20} />,
               "Profile",
               !!myAddress && view.t === "profile" && stack.length === 1 && myAddress,
+              // eslint-disable-next-line react-hooks/refs
               goToProfile,
               !myAddress
             )}
