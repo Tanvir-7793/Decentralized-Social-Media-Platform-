@@ -188,7 +188,9 @@ documentation/
 
 ## 🌐 Live Demo
 
-Deployed on **Vercel**: Coming soon — deploy with `yarn vercel:yolo --prod`
+Deployed on **Vercel**: https://decentralized-social-media-platform-rho.vercel.app/
+
+Connect your MetaMask wallet on **Base Sepolia** and start using OrbitX!
 
 ## 🧠 Tech Stack
 
