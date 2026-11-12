@@ -16,6 +16,7 @@ import {
   display,
   fName,
   sans,
+  textMain,
   textDim,
   textMuted,
   accent,
