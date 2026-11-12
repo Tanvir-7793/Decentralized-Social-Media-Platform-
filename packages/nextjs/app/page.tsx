@@ -217,7 +217,7 @@ export default function Home() {
       {/* Top bar */}
       <header className="sticky top-0 z-20 flex items-center justify-between border-b border-[#202020]/40 bg-[#000000]/80 px-4 py-2 backdrop-blur-md">
         <button onClick={() => setStack([{ t: "home" }])} className="-ml-1 flex items-center gap-2">
-          <span className={`${display.className} text-xl font-bold tracking-tight`}>Orbit</span>
+          <span className={`${display.className} text-xl font-bold tracking-tight`}>OrbitX</span>
         </button>
         <div className="flex items-center gap-3">
           {S.me ? (
@@ -238,9 +238,11 @@ export default function Home() {
           <div className="flex flex-col gap-1">
             <button
               onClick={() => setStack([{ t: "home" }])}
-              className={`mb-4 flex items-center gap-3 text-[20px] font-bold tracking-tight`}
+              className={`mb-4 flex flex-col items-center gap-1 text-[20px] font-bold tracking-tight`}
             >
-              <HomeIcon size={22} className={textMuted} /> <span>Orbit</span>
+              <HomeIcon size={22} className={textMuted} />
+              <span>OrbitX</span>
+              <span className="text-xs text-[#536471] font-normal tracking-wider uppercase">Connect Freely. Share Decentrally.</span>
             </button>
             {navItem(
               <HomeIcon size={20} />,
@@ -303,7 +305,7 @@ export default function Home() {
             )}
           </section>
           <p className={`${textDim} text-xs leading-relaxed`}>
-            Orbit runs on Base Sepolia, a test network. Profiles, posts, likes
+            OrbitX runs on Base Sepolia, a test network. Profiles, posts, likes
             and follows live on-chain.
             {S.contractAddress && (
               <>

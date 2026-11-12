@@ -1,83 +1,218 @@
-# 🏗 Scaffold-ETH 2
+# 🚀 OrbitX
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+> **Connect Freely. Share Decentrally.**
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+A modern, premium decentralized social media platform built on **Base Sepolia** — where profiles, posts, likes, and follows live on-chain, and content is stored on IPFS.
 
-> [!NOTE]
-> 🤖 Scaffold-ETH 2 is AI-ready! It has everything agents need to build on Ethereum. Check `.agents/`, `.claude/`, `.opencode` or `.cursor/` for more info.
+> 📚 **Blockchain Technology Course Project**  
+> This project was developed as part of a Blockchain Technology course, demonstrating end-to-end dApp development with smart contracts, frontend integration, decentralized storage, and testnet deployment.
 
-⚙️ Built using NextJS, RainbowKit, Foundry, Wagmi, Viem, and Typescript.
+---
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/Foundry-FF3E00?style=for-the-badge&logo=foundry&logoColor=white" alt="Foundry" />
+  <img src="https://img.shields.io/badge/Solidity-363636?style=for-the-badge&logo=solidity&logoColor=white" alt="Solidity" />
+  <img src="https://img.shields.io/badge/Wagmi-000000?style=for-the-badge&logo=wagmi&logoColor=white" alt="Wagmi" />
+  <img src="https://img.shields.io/badge/RainbowKit-000000?style=for-the-badge&logo=rainbowkit&logoColor=white" alt="RainbowKit" />
+  <img src="https://img.shields.io/badge/Base%20Sepolia-0052FF?style=for-the-badge&logo=base&logoColor=white" alt="Base Sepolia" />
+  <img src="https://img.shields.io/badge/IPFS-65C2CB?style=for-the-badge&logo=ipfs&logoColor=white" alt="IPFS" />
+</p>
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+---
 
-## Requirements
+## 📖 Overview
 
-Before you begin, you need to install the following tools:
+**OrbitX** is a decentralized social media platform that reimagines social networking on the blockchain. Unlike traditional social platforms where user data is controlled by centralized corporations, OrbitX puts ownership back in your hands:
 
-- [Node (>= v20.18.3)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
+- **Profiles, posts, likes, and follows** are recorded on-chain via smart contracts
+- **Content (text, bios)** is stored on IPFS — immutable and censorship-resistant
+- **Wallet-based identity** — your MetaMask address is your account
+- **No ads, no tracking, no central authority**
 
-## Quickstart
-
-To get started with Scaffold-ETH 2, follow the steps below:
-
-1. Install dependencies if it was skipped in CLI:
+## 🏗️ Architecture
 
 ```
-cd my-dapp-example
+┌─────────────────────────────────────────────────────────────────┐
+│                        User (MetaMask)                          │
+└──────────────────┬──────────────────────────────────────────────┘
+                   │ Sign transactions
+                   ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Next.js Frontend (OrbitX)                    │
+│  • React hooks (useSocial)  • IPFS gateway  • X-inspired UI    │
+└──────────────────┬──────────────────────────────────────────────┘
+                   │ Read events / Write calls
+                   ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Base Sepolia Testnet                         │
+│              Social.sol Smart Contract                          │
+│  • Profiles  • Posts  • Likes  • Follows                        │
+└──────────────────┬──────────────────────────────────────────────┘
+                   │ Content CIDs
+                   ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                         IPFS                                    │
+│              Post text  •  User bios                            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## 📁 Project Structure
+
+```
+decentralised-social-media/
+├── packages/
+│   ├── foundry/                          # Smart contracts (Foundry)
+│   │   ├── contracts/
+│   │   │   ├── Social.sol                # Core social contract (v2)
+│   │   │   └── YourContract.sol
+│   │   ├── script/
+│   │   │   ├── Deploy.s.sol
+│   │   │   └── DeploySocial.s.sol
+│   │   ├── deployments/                  # Deployment artifacts
+│   │   └── foundry.toml
+│   └── nextjs/                           # Frontend (Next.js App Router)
+│       ├── app/
+│       │   ├── page.tsx                  # OrbitX main UI
+│       │   ├── layout.tsx
+│       │   └── api/upload/route.ts       # IPFS pinning endpoint
+│       ├── components/
+│       │   ├── social/
+│       │   │   └── ui.tsx                # X-inspired components
+│       │   └── ThemeProvider.tsx
+│       ├── hooks/
+│       │   └── useSocial.ts              # Social state hook
+│       ├── contracts/
+│       │   └── deployedContracts.ts      # Auto-generated ABI
+│       └── scaffold.config.ts
+├── documentation/                        # Course project docs & screenshots
+├── .gitignore
+├── README.md
+└── AGENTS.md
+```
+
+## 🛠️ Smart Contract (`Social.sol`)
+
+| Function | Purpose |
+|----------|---------|
+| `setProfile(handle, metadataCID)` | Register/update on-chain handle + bio |
+| `post(contentCID, replyTo)` | Create a post (replyTo=0 = top-level) |
+| `follow(user)` / `unfollow(user)` | Social graph edges |
+| `like(postId)` / `unlike(postId)` | Like state, enforced on-chain |
+
+### Key Design Decisions
+- **Post IDs start at 1** — `replyTo = 0` unambiguously means "not a reply"
+- **Storage vs Events** — Minimal data stored on-chain (addresses, CIDs, bools); heavy content (text) lives on IPFS
+- **On-chain enforcement** — Users cannot like or follow twice (storage-backed, not event-only)
+
+## 🎨 Frontend Features
+
+- **X-inspired dark premium UI** — Black theme with blue accents, rounded cards, backdrop blur
+- **Real-time feed** — Polls contract events every 6 seconds
+- **Optimistic updates** — Like/follow states update instantly before confirmation
+- **IPFS content loading** — Fetches post text/bios via multiple gateways
+- **Who to follow** — Suggestions sorted by follower count
+- **Threaded replies** — Navigate post threads with back navigation
+- **Mobile responsive** — Bottom nav and collapsible sidebar
+
+## 🚀 Quickstart
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v20+)
+- [Yarn](https://yarnpkg.com/) (v4)
+- [Git](https://git-scm.com/)
+- [MetaMask](https://metamask.io/) wallet
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Tanvir-7793/Decentralized-Social-Media-Platform-.git
+cd decentralised-social-media
+```
+
+### 2. Install dependencies
+
+```bash
 yarn install
 ```
 
-2. Run a local network in the first terminal:
+### 3. Start local chain (optional, for local testing)
 
-```
+```bash
+# Terminal 1
 yarn chain
 ```
 
-This command starts a local Ethereum network using Foundry. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `packages/foundry/foundry.toml`.
+### 4. Deploy contracts
 
-3. On a second terminal, deploy the test contract:
-
+```bash
+# Terminal 2
+yarn deploy --network baseSepolia
 ```
-yarn deploy
-```
 
-This command deploys a test smart contract to the local network. The contract is located in `packages/foundry/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/foundry/script` to deploy the contract to the network. You can also customize the deploy script.
+### 5. Start the frontend
 
-4. On a third terminal, start your NextJS app:
-
-```
+```bash
+# Terminal 3
+cd packages/nextjs
 yarn start
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+Visit `http://localhost:3000` and connect MetaMask on **Base Sepolia**.
 
-Run smart contract test with `yarn foundry:test`
+## 🧪 How to Use OrbitX
 
-- Edit your smart contracts in `packages/foundry/contracts`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/foundry/script`
+1. **Connect Wallet** — Click the connect button in the header
+2. **Create Profile** — Choose a handle (3–20 chars) and optional bio
+3. **Publish Post** — Share what's happening (text pinned to IPFS)
+4. **Engage** — Like posts, follow users, write replies
+5. **Explore** — Browse the "For you" feed or "Following" tab
 
+## 📊 Course Project Documentation
 
-## Documentation
+This project was completed as a **Blockchain Technology course project**. Detailed documentation and output screenshots are available in the `documentation/` folder:
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
+```
+documentation/
+├── screenshots/          # Output screenshots from the project
+├── reports/              # Word documents & project reports
+└── diagrams/             # Architecture & workflow diagrams
+```
 
-To know more about its features, check out our [website](https://scaffoldeth.io).
+### Screenshots included:
+- Home feed view
+- Profile page
+- Post detail & thread
+- MetaMask connection flow
+- Blockchain explorer verification (BaseScan)
 
-## Contributing to Scaffold-ETH 2
+## 🌐 Live Demo
 
-We welcome contributions to Scaffold-ETH 2!
+Deployed on **Vercel**: Coming soon — deploy with `yarn vercel:yolo --prod`
 
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+## 🧠 Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Blockchain | Base Sepolia (Ethereum L2 Testnet) |
+| Smart Contracts | Solidity ^0.8.20, Foundry |
+| Frontend | Next.js 16 (App Router), TypeScript |
+| Wallet | MetaMask, RainbowKit, Wagmi |
+| Styling | Tailwind CSS, DaisyUI |
+| Storage | IPFS (Infura/Pinata gateways) |
+| Deployment | Vercel |
+
+## 🤝 Contributing
+
+This is a course project, but contributions and feedback are welcome! Please open an issue or submit a pull request.
+
+## 📄 License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center">
+  <strong>OrbitX</strong> — Connect Freely. Share Decentrally.<br>
+  Built with ❤️ for the Blockchain Technology course
+</p>
