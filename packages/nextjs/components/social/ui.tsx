@@ -62,7 +62,7 @@ export const MoreIcon = ({ size = 18, className }: { size?: number; className?: 
   <Icon d="M12 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0 7a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0 7a1 1 0 1 1 0 2 1 1 0 0 1 0-2" size={size} color="#71767b" className={className} />
 );
 export const BackIcon = ({ size = 20, className }: { size?: number; className?: string }) => <Icon d="M15 18l-6-6 6-6" size={size} className={className} />;
-export const HomeIcon = ({ size = 20, className }: { size?: number; className?: string }) => <Icon d="M3 12l9-8 9 8M12 5v14M12 5l-7 7M12 5l7 7" size={size} className={className} />;
+export const HomeIcon = ({ size = 20, color = "currentColor", className }: { size?: number; color?: string; className?: string }) => <Icon d="M3 12l9-8 9 8M12 5v14M12 5l-7 7M12 5l7 7" size={size} color={color} className={className} />;
 export const UserIcon = ({ size = 20, className }: { size?: number; className?: string }) => <Icon d="M19 21a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2z" size={size} className={className} />;
 export const TickIcon = ({ size = 14, className }: { size?: number; className?: string }) => <Icon d="M5 13l4 4L19 7" size={size} color="#1d9bf0" weight={2.5} className={className} />;
 
