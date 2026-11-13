@@ -76,8 +76,8 @@ const Icon = ({ d, size = 20, color = "currentColor", weight = 2, className }: {
   </svg>
 );
 
-export const HeartIcon = ({ filled }: { filled?: boolean }) => (
-  <svg width={22} height={22} viewBox="0 0 24 24" fill={filled ? "#f4212e" : "none"} stroke={filled ? "none" : "#71767b"} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+export const HeartIcon = ({ filled, size = 22 }: { filled?: boolean; size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "#f4212e" : "none"} stroke={filled ? "none" : "#71767b"} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
     <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3.05 1.32-3.458 3.045C12.727 4.309 12 4.793 12 5.198c-.207-.405-.927-.889-1.542-2.153C9.05 4.32 7.76 3 6 3a5.5 5.5 0 0 0-5.5 5.5c0 2.29 1.51 4.04 3 5.5l4 4 4-4z" />
   </svg>
 );
