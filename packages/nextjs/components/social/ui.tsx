@@ -118,7 +118,7 @@ export function IpfsText({ cid, className = "" }: { cid: string; className?: str
 }
 
 // Media image stored on IPFS (post attachment)
-export function PostMedia({ cid, className = "" }: { cid: string; className?: string }) {
+export function PostMedia({ cid, className = "", onClick }: { cid: string; className?: string; onClick?: () => void }) {
   const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [error, setError] = useState(false);
 
@@ -145,6 +145,7 @@ export function PostMedia({ cid, className = "" }: { cid: string; className?: st
       alt="Post media"
       className={`rounded-xl object-cover w-full max-h-[500px] cursor-pointer ${className}`}
       style={{ maxWidth: "100%" }}
+      onClick={onClick}
     />
   );
 }
