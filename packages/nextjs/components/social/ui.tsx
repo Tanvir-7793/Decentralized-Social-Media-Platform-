@@ -132,7 +132,7 @@ export function PostMedia({ cid, className = "" }: { cid: string; className?: st
   }, [cid, error]);
 
   if (error) {
-    return <p className={`${textDim} text-sm mt-2`}>Couldn't load media.</p>;
+    return <p className={`${textDim} text-sm mt-2`}>Couldn&apos;t load media.</p>;
   }
   if (!imgUrl) {
     return <div className={`${className} h-48 rounded-xl bg-[#202020]/40 flex items-center justify-center`}>

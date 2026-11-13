@@ -155,6 +155,25 @@ const deployedContracts = {
       abi: [
         {
           type: "function",
+          name: "avatarOf",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
           name: "follow",
           inputs: [
             {
@@ -292,6 +311,11 @@ const deployedContracts = {
               type: "uint256",
               internalType: "uint256",
             },
+            {
+              name: "mediaCID",
+              type: "string",
+              internalType: "string",
+            },
           ],
           outputs: [
             {
@@ -300,6 +324,38 @@ const deployedContracts = {
               internalType: "uint256",
             },
           ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "postMediaOf",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "setAvatar",
+          inputs: [
+            {
+              name: "avatarCID",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
           stateMutability: "nonpayable",
         },
         {
@@ -345,6 +401,25 @@ const deployedContracts = {
           ],
           outputs: [],
           stateMutability: "nonpayable",
+        },
+        {
+          type: "event",
+          name: "AvatarSet",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "avatarCID",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+          ],
+          anonymous: false,
         },
         {
           type: "event",
@@ -411,6 +486,12 @@ const deployedContracts = {
               type: "uint256",
               indexed: false,
               internalType: "uint256",
+            },
+            {
+              name: "mediaCID",
+              type: "string",
+              indexed: false,
+              internalType: "string",
             },
           ],
           anonymous: false,
@@ -485,7 +566,7 @@ const deployedContracts = {
   },
   84532: {
     YourContract: {
-      address: "0xfc270b4c399199863e098b88f043f873df367354",
+      address: "0xf3c9e81d5289f19a4d9fc20971f2d14c8874a767",
       abi: [
         {
           type: "constructor",
@@ -626,11 +707,30 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 57869952,
+      deployedOnBlock: 58356446,
     },
     Social: {
-      address: "0x609b16b46778406a4416668180b0058527058b43",
+      address: "0x30495190960412da008d58033a47ca33e63f0a7a",
       abi: [
+        {
+          type: "function",
+          name: "avatarOf",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          stateMutability: "view",
+        },
         {
           type: "function",
           name: "follow",
@@ -770,6 +870,11 @@ const deployedContracts = {
               type: "uint256",
               internalType: "uint256",
             },
+            {
+              name: "mediaCID",
+              type: "string",
+              internalType: "string",
+            },
           ],
           outputs: [
             {
@@ -778,6 +883,38 @@ const deployedContracts = {
               internalType: "uint256",
             },
           ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "postMediaOf",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "setAvatar",
+          inputs: [
+            {
+              name: "avatarCID",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
           stateMutability: "nonpayable",
         },
         {
@@ -823,6 +960,25 @@ const deployedContracts = {
           ],
           outputs: [],
           stateMutability: "nonpayable",
+        },
+        {
+          type: "event",
+          name: "AvatarSet",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "avatarCID",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+          ],
+          anonymous: false,
         },
         {
           type: "event",
@@ -889,6 +1045,12 @@ const deployedContracts = {
               type: "uint256",
               indexed: false,
               internalType: "uint256",
+            },
+            {
+              name: "mediaCID",
+              type: "string",
+              indexed: false,
+              internalType: "string",
             },
           ],
           anonymous: false,
@@ -958,7 +1120,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 57869952,
+      deployedOnBlock: 58356447,
     },
   },
 } as const;
