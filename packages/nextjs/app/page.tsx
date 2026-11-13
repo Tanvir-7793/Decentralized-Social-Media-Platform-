@@ -92,7 +92,7 @@ export default function Home() {
               S={S}
               placeholder="What is happening?"
               label="Post"
-              onSubmit={(t, mediaFile) => S.publish(t, "0", mediaFile)}
+              onSubmit={(t, mediaFile) => S.publish(t, "0", mediaFile ?? undefined)}
             />
             <div className="flex gap-6 border-b border-[#202020]/40 px-4 py-2">
               {(["all", "following"] as const).map((t) => (
@@ -167,7 +167,7 @@ export default function Home() {
             S={S}
             placeholder="Write a reply"
             label="Reply"
-            onSubmit={(t, mediaFile) => S.publish(t, post.id, mediaFile)}
+            onSubmit={(t, mediaFile) => S.publish(t, post.id, mediaFile ?? undefined)}
           />
         ) : (
           <p className="border-b border-[#202020]/40 px-4 py-4 text-[#71767b] text-sm">
