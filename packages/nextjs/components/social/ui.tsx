@@ -70,8 +70,8 @@ export function Avatar({ address, avatarCid, size = 40 }: { address: string; ava
   return <Orb address={address} size={size} />;
 }
 
-const Icon = ({ d, size = 20, color = "currentColor", weight = 2 }: { d: string; size?: number; color?: string; weight?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round" strokeLinejoin="round">
+const Icon = ({ d, size = 20, color = "currentColor", weight = 2, className }: { d: string; size?: number; color?: string; weight?: number; className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={weight} strokeLinecap="round" strokeLinejoin="round" className={className}>
     <path d={d} />
   </svg>
 );
