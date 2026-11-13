@@ -7,15 +7,18 @@ contract Social {
 
     mapping(string => address) public handleOwner;
     mapping(address => string) public handleOf;
+    mapping(address => string) public avatarOf;         // NEW: profile picture CID per user
     mapping(address => mapping(address => bool)) public isFollowing;
     mapping(uint256 => mapping(address => bool)) public hasLiked;
+    mapping(uint256 => string) public postMediaOf;       // NEW: media CID per post
 
     event ProfileSet(address indexed user, string handle, string metadataCID);
-    event Posted(uint256 indexed id, address indexed author, string contentCID, uint256 replyTo);
+    event Posted(uint256 indexed id, address indexed author, string contentCID, uint256 replyTo, string mediaCID); // UPDATED: added mediaCID
     event Followed(address indexed follower, address indexed followee);
     event Unfollowed(address indexed follower, address indexed followee);
     event Liked(address indexed user, uint256 indexed postId);
     event Unliked(address indexed user, uint256 indexed postId);
+    event AvatarSet(address indexed user, string avatarCID); // NEW
 
     function setProfile(string calldata handle, string calldata metadataCID) external {
         require(bytes(handle).length > 0, "Handle required");
@@ -33,13 +36,22 @@ contract Social {
         emit ProfileSet(msg.sender, handle, metadataCID);
     }
 
+    // NEW: set profile picture (avatar) stored on IPFS
+    function setAvatar(string calldata avatarCID) external {
+        require(bytes(avatarCID).length > 0, "Avatar CID required");
+        avatarOf[msg.sender] = avatarCID;
+        emit AvatarSet(msg.sender, avatarCID);
+    }
+
     // replyTo = 0 for a normal post, or the id of the post you're replying to
-    function post(string calldata contentCID, uint256 replyTo) external returns (uint256 id) {
+    // mediaCID = optional IPFS CID for attached image/media (empty string for text-only)
+    function post(string calldata contentCID, uint256 replyTo, string calldata mediaCID) external returns (uint256 id) {
         require(bytes(handleOf[msg.sender]).length > 0, "Create a profile first");
         require(bytes(contentCID).length > 0, "Empty content");
         require(replyTo < nextPostId, "Parent post does not exist");
         id = nextPostId++;
-        emit Posted(id, msg.sender, contentCID, replyTo);
+        postMediaOf[id] = mediaCID;
+        emit Posted(id, msg.sender, contentCID, replyTo, mediaCID);
     }
 
     function follow(address user) external {

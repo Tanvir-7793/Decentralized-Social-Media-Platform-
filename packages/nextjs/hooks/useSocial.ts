@@ -7,7 +7,7 @@ import { notification } from "~~/utils/scaffold-eth";
 // Block where your NEW Social contract was deployed
 export const FROM_BLOCK = 57869952n;
 
-export type Post = { id: string; author: string; cid: string; replyTo: string };
+export type Post = { id: string; author: string; cid: string; replyTo: string; mediaCid: string };
 
 const low = (s: string) => s.toLowerCase();
 const order = (l: any) => Number(l.blockNumber) * 100000 + Number(l.logIndex);
@@ -16,6 +16,7 @@ export const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
 const GATEWAYS = ["https://ipfs.io/ipfs/", "https://dweb.link/ipfs/", "https://gateway.pinata.cloud/ipfs/"];
 const jsonCache = new Map<string, any>();
+const blobCache = new Map<string, string>();
 
 // Loads JSON from IPFS, trying several gateways at once
 export async function loadJson(cid: string) {
@@ -32,11 +33,45 @@ export async function loadJson(cid: string) {
   return data;
 }
 
+// Loads an image/blob from IPFS and returns a data URL (for avatars/media)
+export async function loadImage(cid: string): Promise<string> {
+  if (blobCache.has(cid)) return blobCache.get(cid)!;
+  const dataUrl = await Promise.any(
+    GATEWAYS.map(g =>
+      fetch(g + cid).then(async r => {
+        if (!r.ok) throw new Error("gateway failed");
+        const blob = await r.blob();
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      }),
+    ),
+  );
+  blobCache.set(cid, dataUrl);
+  return dataUrl;
+}
+
 async function pin(text: string) {
   const r = await fetch("/api/upload", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text }),
+  });
+  const j = await r.json();
+  if (j.error) throw new Error(j.error);
+  return j.cid as string;
+}
+
+// Pins a file (image) to IPFS via the /api/upload route (multipart)
+async function pinFile(file: File) {
+  const form = new FormData();
+  form.append("file", file);
+  const r = await fetch("/api/upload", {
+    method: "POST",
+    body: form,
   });
   const j = await r.json();
   if (j.error) throw new Error(j.error);
@@ -87,7 +122,7 @@ export function useSocial() {
 
   // Turn raw chain events into app state
   const m = useMemo(() => {
-    const profiles = new Map<string, { handle: string; cid: string }>();
+    const profiles = new Map<string, { handle: string; cid: string; avatarCid: string }>();
     const posts = new Map<string, Post>();
     const replies = new Map<string, string[]>();
     const likes = new Map<string, Set<string>>();
@@ -100,12 +135,22 @@ export function useSocial() {
         const a = l.args;
         switch (l.eventName) {
           case "ProfileSet":
-            profiles.set(low(a.user), { handle: a.handle, cid: a.metadataCID });
+            profiles.set(low(a.user), { handle: a.handle, cid: a.metadataCID, avatarCid: "" });
+            break;
+          case "AvatarSet":
+            // Update existing profile entry or create new one
+            if (profiles.has(low(a.user))) {
+              const p = profiles.get(low(a.user))!;
+              profiles.set(low(a.user), { ...p, avatarCid: a.avatarCID });
+            } else {
+              profiles.set(low(a.user), { handle: "", cid: "", avatarCid: a.avatarCID });
+            }
             break;
           case "Posted": {
             const id = String(a.id);
             const replyTo = String(a.replyTo);
-            posts.set(id, { id, author: low(a.author), cid: a.contentCID, replyTo });
+            const mediaCid = String(a.mediaCID ?? "");
+            posts.set(id, { id, author: low(a.author), cid: a.contentCID, replyTo, mediaCid });
             if (replyTo !== "0") replies.set(replyTo, [...(replies.get(replyTo) ?? []), id]);
             break;
           }
@@ -188,10 +233,14 @@ export function useSocial() {
     }
   };
 
-  const publish = async (text: string, replyTo = "0") => {
+  const publish = async (text: string, replyTo = "0", mediaFile?: File) => {
     try {
+      let mediaCid = "";
+      if (mediaFile) {
+        mediaCid = await pinFile(mediaFile);
+      }
       const cid = await pin(text);
-      await send("post", [cid, BigInt(replyTo)]);
+      await send("post", [cid, BigInt(replyTo), mediaCid]);
       return true;
     } catch (e: any) {
       notification.error(e?.shortMessage ?? e?.message ?? "Couldn't publish.");
@@ -199,7 +248,7 @@ export function useSocial() {
     }
   };
 
-  const saveProfile = async (rawHandle: string, bio: string) => {
+  const saveProfile = async (rawHandle: string, bio: string, avatarFile?: File) => {
     const h = rawHandle.trim().toLowerCase();
     if (!/^[a-z0-9_]{3,20}$/.test(h)) {
       notification.error("Handles use 3–20 letters, numbers or underscores.");
@@ -211,11 +260,30 @@ export function useSocial() {
       return false;
     }
     try {
+      let avatarCid = "";
+      if (avatarFile) {
+        avatarCid = await pinFile(avatarFile);
+      }
       const cid = bio.trim() ? await pin(bio.trim()) : "";
       await send("setProfile", [h, cid]);
+      if (avatarCid) {
+        await send("setAvatar", [avatarCid]);
+      }
       return true;
     } catch (e: any) {
       notification.error(e?.shortMessage ?? "Couldn't save your profile.");
+      return false;
+    }
+  };
+
+  const setAvatar = async (avatarFile: File) => {
+    if (!me) return notification.error("Connect a wallet to set avatar.");
+    try {
+      const avatarCid = await pinFile(avatarFile);
+      await send("setAvatar", [avatarCid]);
+      return true;
+    } catch (e: any) {
+      notification.error(e?.shortMessage ?? "Couldn't set avatar.");
       return false;
     }
   };
@@ -237,6 +305,9 @@ export function useSocial() {
     toggleFollow,
     publish,
     saveProfile,
+    setAvatar,
+    loadImage,
+    isCid,
   };
 }
 

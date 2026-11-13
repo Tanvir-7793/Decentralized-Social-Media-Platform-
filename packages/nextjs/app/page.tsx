@@ -4,12 +4,12 @@ import { useCallback, useState } from "react";
 import { useAccount } from "wagmi";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import {
+  Avatar,
   BackIcon,
   Composer,
   FollowButton,
   HomeIcon,
   IpfsText,
-  Orb,
   PostRow,
   ProfileSetup,
   UserIcon,
@@ -92,7 +92,7 @@ export default function Home() {
               S={S}
               placeholder="What is happening?"
               label="Post"
-              onSubmit={(t) => S.publish(t)}
+              onSubmit={(t, mediaFile) => S.publish(t, "0", mediaFile)}
             />
             <div className="flex gap-6 border-b border-[#202020]/40 px-4 py-2">
               {(["all", "following"] as const).map((t) => (
@@ -127,7 +127,7 @@ export default function Home() {
       <>
         <div className="border-b border-[#202020]/40 px-4 py-4">
           <div className="flex items-start justify-between mb-3">
-            <Orb address={a} size={72} />
+            <Avatar address={a} avatarCid={prof?.avatarCid} size={72} />
             {S.me && S.me !== a && <FollowButton S={S} address={a} />}
           </div>
           <h2 className={`${fName} mt-2 text-2xl tracking-tight`}>
@@ -167,7 +167,7 @@ export default function Home() {
             S={S}
             placeholder="Write a reply"
             label="Reply"
-            onSubmit={(t) => S.publish(t, post.id)}
+            onSubmit={(t, mediaFile) => S.publish(t, post.id, mediaFile)}
           />
         ) : (
           <p className="border-b border-[#202020]/40 px-4 py-4 text-[#71767b] text-sm">
@@ -228,7 +228,7 @@ export default function Home() {
         <div className="flex items-center gap-3">
           {S.me ? (
             <button onClick={() => S.me && go({ t: "profile", a: S.me })} className="p-2 rounded-full hover:bg-[#161616] transition-colors">
-              <Orb address={S.me} size={28} />
+              <Avatar address={S.me} avatarCid={S.profiles.get(S.me)?.avatarCid} size={28} />
             </button>
           ) : (
             <RainbowKitCustomConnectButton />
@@ -299,7 +299,7 @@ export default function Home() {
                       onClick={() => toProfile(a)}
                       className="flex min-w-0 flex-1 items-center gap-3 text-left"
                     >
-                      <Orb address={a} size={32} />
+                      <Avatar address={a} avatarCid={S.profiles.get(a)?.avatarCid} size={32} />
                       <span className={`${fName} truncate text-[14px]`}>
                         @{S.profiles.get(a)?.handle}
                       </span>
